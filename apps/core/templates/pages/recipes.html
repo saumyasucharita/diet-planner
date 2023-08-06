@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+<!DOCTYPE html>
+
+{% block title %} Recipe dashboard {% endblock %}
+<body>
+
+{% block content %}
+{% if error %}
+<p> An error has occured </p>
+{% endif %}
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Recipe</th>
+      <th scope="col">Calories</th>
+	  <th scope="col">Protein</th>
+	  <th scope="col">Fat</th>
+	  <th scope="col">Carbs</th>
+	  <th scope="col">Recipe Link</th>
+    </tr>
+  </thead>
+  <tbody>
+	{% for recipe in recipes %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ recipe.title }}</td>
+      <td>{{ recipe.calories}} </td>
+	  <td>{{ recipe.protein}} </td>
+	  <td>{{ recipe.fat}} </td>
+	  <td>{{ recipe.carbs}} </td>
+	  <td><a href={{ recipe.recipe_link }} ><img src={{ recipe.image}} class="figure-img img-fluid rounded" width="50" height="50"/></a></td>
+    </tr>
+	{% endfor %}
+  </tbody>
+</table>
+<div class="row">
+		<div class="col mt-4">
+         <button class="btn btn-primary btn-lg input-group-text">Save Recipes</button>
+</div>
+{% endblock %}
+
+

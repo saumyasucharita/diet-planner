@@ -1,0 +1,19 @@
+
+
+{% extends "base.html" %}
+
+{% block title %} Nutrient breakdown of recipes {% endblock %}	
+
+{% block content %}
+	<div class="row">
+	<div class="col">
+    <figure>
+      <embed type="image/svg+xml" src={{ rendered_chart_svg_as_datauri | safe }} />
+    </figure>
+	</div>
+	</div>
+{% endblock %}
+
+
+
+
