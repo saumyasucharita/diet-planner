@@ -55,7 +55,7 @@ def search_recipes(request):
 	
 		if form.is_valid(): # Check if valid (and as side-effect, generate cleaned_data dict)
 			try:
-				if recipe_data not in cache:
+				if 'recipe_data' not in cache:
 					recipe_data = spoonacular_api_call(request)
 					# Saving data (15 minutes timeout)
 					cache.set('recipe_data', recipe_data, 15*60)
@@ -91,7 +91,13 @@ def search_recipes(request):
 def compare_calories(request):
 	print('In compare calories view')
 
-	recipe_data = spoonacular_api_call(request)
+	if 'recipe_data' not in cache:
+		recipe_data = spoonacular_api_call(request)
+		cache.set('recipe_data', recipe_data, 15*60)
+				
+	else:
+		print("Data in cache")
+		recipe_data = cache.get('recipe_data')
 
 	# Extracting the titles and calories from the API response
 	titles = [recipe['title'] for recipe in recipe_data]
@@ -120,7 +126,13 @@ def compare_calories(request):
 def nutrient_breakdown(request):
 	print('In nutrient breakdown view')
 
-	recipe_data = spoonacular_api_call(request)
+	if 'recipe_data' not in cache:
+		recipe_data = spoonacular_api_call(request)
+		cache.set('recipe_data', recipe_data, 15*60)
+				
+	else:
+		print("Data in cache")
+		recipe_data = cache.get('recipe_data')
 	titles = [recipe['title'] for recipe in recipe_data]
 
 	#Plot a stacked bar chart having breakdown of protein, fat and carbs for each recipe
