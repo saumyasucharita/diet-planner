@@ -1,9 +1,12 @@
 import requests
+import ast
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django import forms
 import pygal  
 import traceback
 from django.core.cache import cache
+from .models import DietPlan
 
 #How to fetch from a env file (TBD HW-2)
 api_key = "99033f8fe5554466ac9ef2e7657a10fc"
@@ -17,12 +20,12 @@ class NutrientForm(forms.Form):
     maxProtein = forms.IntegerField(min_value=0, label = "Maximum protein(grams)", required=False)
     minFat = forms.IntegerField(min_value=0, label = "Minimum fat(grams)", required=False)
     maxFat = forms.IntegerField(min_value=0, label = "Maximum fat(grams)", required=False)
-    saved_list_name = forms.CharField(max_length=127, label = "Diet Plan Name", required=False)
+    diet_plan_name = forms.CharField(max_length=127, label = "Diet Plan Name")
     
 # Helper function
 def spoonacular_api_call(request):
 	#Spoonacular API url
-	url = "https://api.spoonacular.com/recipes/findByNutrients?apiKey="+ api_key + "&number=5"
+	url = "https://api.spoonacular.com/recipes/findByNutrients?apiKey="+ api_key + "&number=7"
 
 	params = {
 		key: value
@@ -58,7 +61,7 @@ def search_recipes(request):
 				if 'recipe_data' not in cache:
 					recipe_data = spoonacular_api_call(request)
 					# Saving data (15 minutes timeout)
-					cache.set('recipe_data', recipe_data, 15*60)
+					cache.set('recipe_data', recipe_data, 60*60)
 				
 				else:
 					# Retrieving data
@@ -75,18 +78,68 @@ def search_recipes(request):
 				#Set the recipe url(another api call)
 				recipe_url = f'https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=false&apiKey={api_key}'
 				print(recipe_url)
-				recipe_info = requests.get(recipe_url).json()
+				#Revert this
+				#recipe_info = requests.get(recipe_url).json()
 				#Add another field recipe_link to the recipe json
-				recipe['recipe_link'] = recipe_info['sourceUrl']
+				#recipe['recipe_link'] = recipe_info['sourceUrl']
+				recipe['recipe_link'] = 'https://www.indianhealthyrecipes.com/chilli-chicken-dry-recipe-indo-chinese-style/'
+			diet_plan_name = form.cleaned_data['diet_plan_name']
 
 	else:
 		form = NutrientForm()
 		
 	context = {
 		'recipes' : recipe_data,
+		'diet_plan_name' : diet_plan_name,
 		'error' : error
 	}
 	return render(request, 'pages/recipes.html', context)
+
+#Create diet plan(C of CRUD)
+def create_diet_plan(request):
+	print('In create diet plan view')
+	
+	if request.method == 'POST':
+		recipe_data = request.POST.getlist('recipes')
+		print(request.POST.get('diet_plan_name'))
+
+		for recipe in recipe_data:
+			recipe_dict = ast.literal_eval(recipe) #Why json.loads didn't work?
+
+			DietPlan.objects.create(
+						recipe_name=recipe_dict['title'],
+						calories=recipe_dict['calories'],
+						protein=recipe_dict['protein'],
+						fat=recipe_dict['fat'],
+						carbs=recipe_dict['carbs'],
+						user = request.user,
+						diet_plan_name = request.POST.get('diet_plan_name'),
+			)
+
+	return redirect('home') #TBD
+
+
+# #Read diet plan(R of CRUD)
+# def display_diet_plan(request):
+# 	print('')
+# 	context = {
+# 	}
+# 	return render(request, 'pages/recipes.html', context)
+
+# #Update diet plan(U of CRUD)
+# def update_diet_plan(request):
+# 	print('')
+# 	context = {
+# 	}
+# 	return render(request, 'pages/recipes.html', context)
+
+
+# #Delete recipes from diet plan(D of CRUD)
+# def delete_recipe(request):
+# 	print('')
+# 	context = {
+# 	}
+# 	return render(request, 'pages/recipes.html', context)
 
 def compare_calories(request):
 	print('In compare calories view')

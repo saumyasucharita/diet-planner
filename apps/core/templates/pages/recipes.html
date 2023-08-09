@@ -9,6 +9,9 @@
 {% if error %}
 <p> An error has occured </p>
 {% endif %}
+<form class="input-group mb-4" method="POST" action="{% url  'create_diet_plan' %}">
+{% csrf_token %}
+<p> Showing recipes for {{ diet_plan_name }} </p>
   <table class="table">
   <thead>
     <tr>
@@ -32,13 +35,16 @@
 	  <td>{{ recipe.carbs}} </td>
 	  <td><a href={{ recipe.recipe_link }} ><img src={{ recipe.image}} class="figure-img img-fluid rounded" width="50" height="50"/></a></td>
     </tr>
+	<input type="hidden" name="recipes" value="{{ recipe }}">
+	<input type="hidden" name="diet_plan_name" value="{{ diet_plan_name }}">
 	{% endfor %}
   </tbody>
 </table>
 <div class="row">
 		<div class="col mt-4">
-         <button class="btn btn-primary btn-lg input-group-text">Save Recipes</button>
+         <button class="btn btn-primary btn-lg input-group-text">Save Recipes</button> 
 </div>
+</form>
 {% endblock %}
 
 
