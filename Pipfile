@@ -9,6 +9,7 @@ django-bootstrap5 = "*"
 requests = "*"
 pygal = "*"
 django-debug-toolbar = "*"
+django-bootstrap-datepicker-plus = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

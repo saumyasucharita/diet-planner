@@ -6,6 +6,7 @@ from django import forms
 import pygal  
 import traceback
 from django.core.cache import cache
+from bootstrap_datepicker_plus.widgets import DatePickerInput
 from .models import DietPlan
 
 #How to fetch from a env file (TBD HW-2)
@@ -20,12 +21,22 @@ class NutrientForm(forms.Form):
     maxProtein = forms.IntegerField(min_value=0, label = "Maximum protein(grams)", required=False)
     minFat = forms.IntegerField(min_value=0, label = "Minimum fat(grams)", required=False)
     maxFat = forms.IntegerField(min_value=0, label = "Maximum fat(grams)", required=False)
-    diet_plan_name = forms.CharField(max_length=127, label = "Diet Plan Name")
+   # diet_plan_name = forms.CharField(max_length=127, label = "Diet Plan Name")
+
+
+class RecipeDateForm(forms.ModelForm):
+    class Meta:
+        model = DietPlan
+        fields = ["date_assigned"]
+        widgets = {
+            'date_assigned': DatePickerInput(),
+        }
+
     
 # Helper function
 def spoonacular_api_call(request):
 	#Spoonacular API url
-	url = "https://api.spoonacular.com/recipes/findByNutrients?apiKey="+ api_key + "&number=7"
+	url = "https://api.spoonacular.com/recipes/findByNutrients?apiKey="+ api_key + "&number=5"
 
 	params = {
 		key: value
@@ -83,14 +94,13 @@ def search_recipes(request):
 				#Add another field recipe_link to the recipe json
 				#recipe['recipe_link'] = recipe_info['sourceUrl']
 				recipe['recipe_link'] = 'https://www.indianhealthyrecipes.com/chilli-chicken-dry-recipe-indo-chinese-style/'
-			diet_plan_name = form.cleaned_data['diet_plan_name']
+			
 
 	else:
 		form = NutrientForm()
 		
 	context = {
 		'recipes' : recipe_data,
-		'diet_plan_name' : diet_plan_name,
 		'error' : error
 	}
 	return render(request, 'pages/recipes.html', context)
@@ -112,26 +122,33 @@ def create_diet_plan(request):
 						protein=recipe_dict['protein'],
 						fat=recipe_dict['fat'],
 						carbs=recipe_dict['carbs'],
+						image = recipe_dict['image'],
 						user = request.user,
-						diet_plan_name = request.POST.get('diet_plan_name'),
+					#	diet_plan_name = request.POST.get('diet_plan_name'),
 			)
 
-	return redirect('home') #TBD
+	return redirect('display_diet_plan') #TBD
 
-
-# #Read diet plan(R of CRUD)
-# def display_diet_plan(request):
-# 	print('')
-# 	context = {
-# 	}
-# 	return render(request, 'pages/recipes.html', context)
+#Display diet plan(R of CRUD)
+def display_diet_plan(request):
+    print('In display diet plan view')
+    recipes = DietPlan.objects.all()
+    recipe_forms = [RecipeDateForm(instance=recipe) for recipe in recipes]
+    context = {
+	    'recipe_forms': recipe_forms,
+		}
+    return render(request, 'pages/diet_plan.html', context)
 
 # #Update diet plan(U of CRUD)
 # def update_diet_plan(request):
-# 	print('')
+# 	print('In update diet plan view')
+# 	if request.method == 'POST':
+# 		form = RecipeDateForm(request.POST)
+# 		if form.is_valid:
+# 			form.save()
 # 	context = {
 # 	}
-# 	return render(request, 'pages/recipes.html', context)
+# 	return render(request, 'pages/diet_plan.html', context)
 
 
 # #Delete recipes from diet plan(D of CRUD)
