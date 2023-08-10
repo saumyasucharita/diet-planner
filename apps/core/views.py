@@ -7,6 +7,7 @@ import pygal
 import traceback
 from django.core.cache import cache
 from bootstrap_datepicker_plus.widgets import DatePickerInput
+from django.core.exceptions import SuspiciousOperation
 from .models import DietPlan
 
 #How to fetch from a env file (TBD HW-2)
@@ -127,36 +128,42 @@ def create_diet_plan(request):
 					#	diet_plan_name = request.POST.get('diet_plan_name'),
 			)
 
-	return redirect('display_diet_plan') #TBD
+	return redirect('display_diet_plan') 
 
 #Display diet plan(R of CRUD)
 def display_diet_plan(request):
     print('In display diet plan view')
-    recipes = DietPlan.objects.all()
+    recipes = DietPlan.objects.filter(user=request.user)
     recipe_forms = [RecipeDateForm(instance=recipe) for recipe in recipes]
     context = {
 	    'recipe_forms': recipe_forms,
 		}
     return render(request, 'pages/diet_plan.html', context)
 
-# #Update diet plan(U of CRUD)
-# def update_diet_plan(request):
-# 	print('In update diet plan view')
-# 	if request.method == 'POST':
-# 		form = RecipeDateForm(request.POST)
-# 		if form.is_valid:
-# 			form.save()
-# 	context = {
-# 	}
-# 	return render(request, 'pages/diet_plan.html', context)
+#Update diet plan(U of CRUD)
+def update_diet_plan(request):
+	print('In update diet plan view')
+	if request.method == 'POST':
+		form = RecipeDateForm(request.POST)
+		if form.is_valid:
+			form.save()
+	context = {
+	}
+	return render(request, 'pages/diet_plan.html', context)
 
 
-# #Delete recipes from diet plan(D of CRUD)
-# def delete_recipe(request):
-# 	print('')
-# 	context = {
-# 	}
-# 	return render(request, 'pages/recipes.html', context)
+#Delete recipes from diet plan(D of CRUD)
+def delete_recipe(request, recipe_id):
+	recipe = DietPlan.objects.get(id=recipe_id)
+	print('Recipe to be deleted', recipe.recipe_name)
+
+	if recipe.user == request.user:
+		recipe.delete()
+		return redirect('display_diet_plan')
+	else:
+		raise SuspiciousOperation('Attempted to delete wrong recipe')
+	
+	
 
 def compare_calories(request):
 	print('In compare calories view')
