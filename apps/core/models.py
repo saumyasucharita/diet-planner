@@ -10,5 +10,5 @@ class DietPlan(models.Model):
     carbs = models.CharField(max_length=127, null=True)
     image = models.URLField(null=True)
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE) 
-    date_assigned = models.DateField(null=True)
+    date_assigned = models.DateField(null=True, blank=True) #Difference between null=True & blank=True
     #diet_plan_name = models.CharField(max_length=127)

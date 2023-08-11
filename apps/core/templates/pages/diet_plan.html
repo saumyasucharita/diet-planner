@@ -1,37 +1,43 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %} Assign date for each recipe {% endblock %}	
 
 {% block content %}
   <h2>Recipes with Calendar</h2>
-  <form class="input-group mb-4" method="POST" action="{% url  'update_diet_plan' %}">
-    {% csrf_token %}
+  
+    {{ recipe_forms.0.media }}
     <div class="card-deck">
-      {% for recipe in recipe_forms %}
+      {% for form in recipe_forms %}
+	  
         <div class="card">
           <div class="card-body">
 		  <div class="row">
 
             <div class="col-lg-6 mt-4">
-            <h3 class="card-title">{{ recipe.instance.recipe_name }} </h3>
-            <p class="card-text">Calories: {{ recipe.instance.calories }}</p>
-			<p class="card-text">Carbs: {{ recipe.instance.carbs }}</p>
-            <p class="card-text">Protein: {{ recipe.instance.protein }}</p>
-			<p class="card-text">Fat: {{ recipe.instance.fat }}</p>
-			 {{ recipe.as_p}}
-            {{ recipe.media }}
-			{% load static %}
-			<a href="{% url 'delete_recipe' recipe.instance.id %}">
+            <h3 class="card-title">{{ form.instance.recipe_name }} </h3>
+            <p class="card-text">Calories: {{ form.instance.calories }}</p>
+			<p class="card-text">Carbs: {{ form.instance.carbs }}</p>
+            <p class="card-text">Protein: {{ form.instance.protein }}</p>
+			<p class="card-text">Fat: {{ form.instance.fat }}</p>
+			<form class="input-group mb-4" method="POST" action="{% url 'update_diet_plan' form.instance.id %}">
+			 {% csrf_token %}
+			 {{ form.as_p}}
+           
+			<button type="submit">Save Date</button>
+		</form>
+			<a href="{% url 'delete_recipe' form.instance.id %}">
 			 <img src="{% static '/images/trash-can-regular.svg' %}" class="figure-img img-fluid rounded" width="25" height="25" alt="Delete">
 			 </a>
+
 			</div>
 			<div class="col-lg-6 mt-4">
-			<img src={{ recipe.instance.image}} class="figure-img img-fluid rounded" width="200" height="200"/> 
+			<img src={{ form.instance.image}} class="figure-img img-fluid rounded" width="200" height="200"/> 
 			</div>
 			</div>
           </div>
         </div>
       {% endfor %}
-	  <button type="submit">Save Dates</button>
+	  
     </div>
 
     

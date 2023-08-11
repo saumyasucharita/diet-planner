@@ -9,7 +9,7 @@ urlpatterns = [
     path('search-recipes/', views.search_recipes, name='get_recipes'),
     path('create_diet_plan/', views.create_diet_plan, name='create_diet_plan'),
     path('display-diet-plan/', views.display_diet_plan, name='display_diet_plan'),
-    path('update-diet-plan/', views.update_diet_plan, name='update_diet_plan'),
+    path('update-diet-plan/<int:recipe_id>', views.update_diet_plan, name='update_diet_plan'),
      path('delete-recipe/<int:recipe_id>/', views.delete_recipe, name='delete_recipe'),
     path('compare-calories/', views.compare_calories),
     path('nutrient-breakdown/', views.nutrient_breakdown)

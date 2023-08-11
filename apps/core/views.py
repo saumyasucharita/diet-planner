@@ -125,7 +125,6 @@ def create_diet_plan(request):
 						carbs=recipe_dict['carbs'],
 						image = recipe_dict['image'],
 						user = request.user,
-					#	diet_plan_name = request.POST.get('diet_plan_name'),
 			)
 
 	return redirect('display_diet_plan') 
@@ -141,13 +140,20 @@ def display_diet_plan(request):
     return render(request, 'pages/diet_plan.html', context)
 
 #Update diet plan(U of CRUD)
-def update_diet_plan(request):
+def update_diet_plan(request, recipe_id): 
 	print('In update diet plan view')
-	if request.method == 'POST':
-		form = RecipeDateForm(request.POST)
-		if form.is_valid:
-			form.save()
+	recipe_requested = DietPlan.objects.get(id=recipe_id)
+
+	form = RecipeDateForm(request.POST or None, instance=recipe_requested)
+	if form.is_valid():
+		instance = form.save(commit=False) #commit = False for IntegrityError at /update-diet-plan/ NOT NULL constraint failed: core_dietplan.user_id
+		instance.user = request.user
+		instance.date_assigned = form.cleaned_data['date_assigned']
+		instance.save()
+		return redirect('display_diet_plan')
+
 	context = {
+		'form': form,
 	}
 	return render(request, 'pages/diet_plan.html', context)
 
