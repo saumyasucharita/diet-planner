@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %} Assign recipe to each date{% endblock %}	
+
+{% block content %}
+  <h2>Calendar</h2>
+  
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th class="weekday-header">Sun</th>
+        <th class="weekday-header">Mon</th>
+        <th class="weekday-header">Tue</th>
+        <th class="weekday-header">Wed</th>
+        <th class="weekday-header">Thu</th>
+        <th class="weekday-header">Fri</th>
+        <th class="weekday-header">Sat</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in month_calendar %}
+        <tr>
+          {% for day in week %}
+            <td class="calendar-day {% if day == 0 %}empty{% endif %}">
+              {% if day > 0 %}
+                {{ day }}
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

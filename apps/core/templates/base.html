@@ -66,7 +66,10 @@
                 <a class="nav-link" href="/search-recipes/?{{ request.GET.urlencode }}">GET RECIPES</a>
             </li>
 			<li class="nav-item">
-                <a class="nav-link" href="{% url 'display_diet_plan' %}?{{ request.GET.urlencode }}">MY SAVED RECIPES</a>
+                <a class="nav-link" href="{% url 'display_diet_plan' %}">MY SAVED RECIPES</a>
+            </li>
+			<li class="nav-item">
+                <a class="nav-link" href="{% url 'display_calendar' %}">CALENDAR VIEW</a>
             </li>
 			<li class="nav-item">
                 <a class="nav-link" href="/compare-calories/?{{ request.GET.urlencode }}">CALORIE COMPARISION</a>

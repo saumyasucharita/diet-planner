@@ -10,7 +10,8 @@ urlpatterns = [
     path('create_diet_plan/', views.create_diet_plan, name='create_diet_plan'),
     path('display-diet-plan/', views.display_diet_plan, name='display_diet_plan'),
     path('update-diet-plan/<int:recipe_id>', views.update_diet_plan, name='update_diet_plan'),
-     path('delete-recipe/<int:recipe_id>/', views.delete_recipe, name='delete_recipe'),
+    path('delete-recipe/<int:recipe_id>/', views.delete_recipe, name='delete_recipe'),
+    path('view-calendar/', views.display_calendar, name='display_calendar'),
     path('compare-calories/', views.compare_calories),
     path('nutrient-breakdown/', views.nutrient_breakdown)
 ]

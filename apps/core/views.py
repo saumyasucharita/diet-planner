@@ -1,5 +1,8 @@
 import requests
 import ast
+import calendar
+import datetime
+from datetime import datetime
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django import forms
@@ -169,7 +172,21 @@ def delete_recipe(request, recipe_id):
 	else:
 		raise SuspiciousOperation('Attempted to delete wrong recipe')
 	
-	
+def display_calendar(request):
+	month = datetime.now().month
+	year = datetime.now().year
+	print(month)
+	print(year)
+	# Create a calendar object
+	cal_html= calendar.HTMLCalendar(calendar.SUNDAY)  
+	# Get the calendar for the specified year and month
+	month_calendar = cal_html.formatmonth(year, month)
+	for i in month_calendar.iterweekdays():
+		print(i)
+	context = {
+		'month_calendar': month_calendar
+		}
+	return render(request, 'pages/view_calendar.html', context)
 
 def compare_calories(request):
 	print('In compare calories view')
