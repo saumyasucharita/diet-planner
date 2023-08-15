@@ -173,18 +173,22 @@ def delete_recipe(request, recipe_id):
 		raise SuspiciousOperation('Attempted to delete wrong recipe')
 	
 def display_calendar(request):
+	print('In calendar view')
 	month = datetime.now().month
 	year = datetime.now().year
-	print(month)
-	print(year)
-	# Create a calendar object
-	cal_html= calendar.HTMLCalendar(calendar.SUNDAY)  
-	# Get the calendar for the specified year and month
-	month_calendar = cal_html.formatmonth(year, month)
-	for i in month_calendar.iterweekdays():
-		print(i)
+
+	cal_html= calendar.TextCalendar(calendar.SUNDAY)
+
+	if request.method == 'POST':
+		selected_recipe_pk = request.POST.get('selected_recipe')
+		selected_date = request.POST.get('selected_date')
+		print(selected_recipe_pk)
+		print(selected_date)
+
+	recipes = DietPlan.objects.filter(user=request.user)
 	context = {
-		'month_calendar': month_calendar
+		'month_calendar': cal_html.monthdays2calendar(year, month), #
+		'recipes' : recipes,
 		}
 	return render(request, 'pages/view_calendar.html', context)
 

@@ -4,31 +4,53 @@
 
 {% block content %}
   <h2>Calendar</h2>
-  
-  <table class="calendar-table">
-    <thead>
+  <div class="table-responsive">
+  <table class="table table-bordered">
+  <thead>
       <tr>
-        <th class="weekday-header">Sun</th>
-        <th class="weekday-header">Mon</th>
-        <th class="weekday-header">Tue</th>
-        <th class="weekday-header">Wed</th>
-        <th class="weekday-header">Thu</th>
-        <th class="weekday-header">Fri</th>
-        <th class="weekday-header">Sat</th>
+        <th scope="col">Sun</th>
+        <th scope="col">Mon</th>
+        <th scope="col">Tue</th>
+        <th scope="col">Wed</th>
+        <th scope="col">Thu</th>
+        <th scope="col">Fri</th>
+        <th scope="col">Sat</th>
       </tr>
-    </thead>
+    </thead> 
     <tbody>
-      {% for week in month_calendar %}
-        <tr>
-          {% for day in week %}
-            <td class="calendar-day {% if day == 0 %}empty{% endif %}">
-              {% if day > 0 %}
-                {{ day }}
-              {% endif %}
-            </td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
+	{% for week in month_calendar %}
+		
+		<tr>
+		{% for day, weekday in week %}
+		<td class="w-15">
+		{% if day == 0 %}
+		{{ empty }}
+		{% else %}
+		<div class="container">
+		<form method="POST">
+            {% csrf_token %}
+			{{ day }}
+		<div class="form-group">
+		<input type="hidden" name="selected_date" value="{{ day }}">
+             <select name="selected_recipe" class="form-control">
+                <option value="">Select Recipe</option>
+                        {% for recipe in recipes %}
+                          <option value="{{ recipe.pk }}">{{ recipe.recipe_name }}</option>
+                        {% endfor %}
+              </select>
+			  <button type="submit" class="btn btn-link">Save Recipe</button>
+        </div>
+                    
+		</form>
+		</div>
+		{% endif %}
+		</td>
+		
+		{% endfor %}
+		</tr>
+		
+	 {% endfor %}
     </tbody>
   </table>
+  </div>
 {% endblock %}
