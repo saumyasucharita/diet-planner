@@ -2,7 +2,7 @@ import requests
 import ast
 import calendar
 import datetime
-from datetime import datetime
+from datetime import datetime, date
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django import forms
@@ -182,30 +182,29 @@ def display_calendar(request):
 	if request.method == 'POST':
 		selected_recipe_pk = request.POST.get('selected_recipe')
 		selected_date = request.POST.get('selected_date')
-		print(selected_recipe_pk)
-		print(selected_date)
+	
+		if selected_date and selected_recipe_pk:
+			selected_recipe = DietPlan.objects.get(id=selected_recipe_pk) #
+			selected_recipe.date_assigned = date(year, month, int(selected_date))
+			selected_recipe.save() 
 
 	recipes = DietPlan.objects.filter(user=request.user)
 	context = {
 		'month_calendar': cal_html.monthdays2calendar(year, month), #
 		'recipes' : recipes,
+		'year' : year,
+		'month' : month,
 		}
 	return render(request, 'pages/view_calendar.html', context)
 
 def compare_calories(request):
 	print('In compare calories view')
 
-	if 'recipe_data' not in cache:
-		recipe_data = spoonacular_api_call(request)
-		cache.set('recipe_data', recipe_data, 15*60)
-				
-	else:
-		print("Data in cache")
-		recipe_data = cache.get('recipe_data')
+	recipes = DietPlan.objects.filter(user=request.user)
 
 	# Extracting the titles and calories from the API response
-	titles = [recipe['title'] for recipe in recipe_data]
-	calories = [recipe['calories'] for recipe in recipe_data]
+	titles = [recipe.recipe_name for recipe in recipes]
+	calories = [recipe.calories for recipe in recipes]
 
 	bar_chart = pygal.Bar()
 	bar_chart.title = 'Calories per Recipe'
@@ -230,14 +229,8 @@ def compare_calories(request):
 def nutrient_breakdown(request):
 	print('In nutrient breakdown view')
 
-	if 'recipe_data' not in cache:
-		recipe_data = spoonacular_api_call(request)
-		cache.set('recipe_data', recipe_data, 15*60)
-				
-	else:
-		print("Data in cache")
-		recipe_data = cache.get('recipe_data')
-	titles = [recipe['title'] for recipe in recipe_data]
+	recipes = DietPlan.objects.filter(user=request.user)
+	titles = [recipe.recipe_name for recipe in recipes]
 
 	#Plot a stacked bar chart having breakdown of protein, fat and carbs for each recipe
 	bar_chart = pygal.StackedBar()
@@ -245,9 +238,9 @@ def nutrient_breakdown(request):
 	bar_chart.x_labels = titles
 	bar_chart.x_label_rotation = 30
 	#Convert the protein/fat/carbs values received from API to int for plotting
-	bar_chart.add('Protein', [int(recipe['protein'][:-1]) for recipe in recipe_data])
-	bar_chart.add('Fat',  [int(recipe['fat'][:-1]) for recipe in recipe_data])
-	bar_chart.add('Carbs', [int(recipe['carbs'][:-1]) for recipe in recipe_data])
+	bar_chart.add('Protein', [int(recipe.protein[:-1]) for recipe in recipes])
+	bar_chart.add('Fat',  [int(recipe.fat[:-1]) for recipe in recipes])
+	bar_chart.add('Carbs', [int(recipe.carbs[:-1]) for recipe in recipes])
 	
 	#Include chart on HTML page	
 	bar_as_datauri = bar_chart.render_data_uri()

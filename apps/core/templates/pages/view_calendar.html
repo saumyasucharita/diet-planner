@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load core_extras %}
 {% block title %} Assign recipe to each date{% endblock %}	
 
 {% block content %}
@@ -32,10 +32,17 @@
 			{{ day }}
 		<div class="form-group">
 		<input type="hidden" name="selected_date" value="{{ day }}">
+			{% for recipe in recipes %}
+					  {% if recipe.date_assigned|date:"Y-n-j" == year|stringformat:"s"|concat_str:'-'|concat_str:month|concat_str:'-'|concat_str:day  %}
+                        <div>{{ recipe.recipe_name }}</div>
+                      {% endif %}
+              {% endfor %} 
              <select name="selected_recipe" class="form-control">
                 <option value="">Select Recipe</option>
                         {% for recipe in recipes %}
-                          <option value="{{ recipe.pk }}">{{ recipe.recipe_name }}</option>
+							{% if recipe.date_assigned|date:"Y-n-j" != year|stringformat:"s"|concat_str:'-'|concat_str:month|concat_str:'-'|concat_str:day  %}
+								<option value="{{ recipe.pk }}">{{  recipe.recipe_name }}</option>
+							 {% endif %}
                         {% endfor %}
               </select>
 			  <button type="submit" class="btn btn-link">Save Recipe</button>

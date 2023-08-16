@@ -71,12 +71,6 @@
 			<li class="nav-item">
                 <a class="nav-link" href="{% url 'display_calendar' %}">CALENDAR VIEW</a>
             </li>
-			<li class="nav-item">
-                <a class="nav-link" href="/compare-calories/?{{ request.GET.urlencode }}">CALORIE COMPARISION</a>
-            </li>
-			<li class="nav-item">
-                <a class="nav-link" href="/nutrient-breakdown/?{{ request.GET.urlencode }}">MACRO NUTRIENT BREAKDOWN</a>
-            </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 {% if request.user.is_authenticated %}

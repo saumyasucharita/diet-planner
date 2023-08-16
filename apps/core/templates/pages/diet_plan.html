@@ -39,7 +39,17 @@
       {% endfor %}
 	  
     </div>
-
-    
+	<div class="row">
+		<div class="col-lg-6 mt-4">
+		<form class="input-group mb-4" method="GET" action="/compare-calories/">
+				<button type="submit" class="btn btn-info">CALORIE COMPARISION</button>
+			</form>
+		</div>
+		<div class="col-lg-6 mt-4">
+		<form class="input-group mb-4" method="GET" action="/nutrient-breakdown/">
+				<button type="submit" class="btn btn-info">MACRO NUTRIENT BREAKDOWN</button>
+			</form>
+		</div>
+	</div>
   </form>
 {% endblock %}
