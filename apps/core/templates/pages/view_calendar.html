@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 {% load core_extras %}
-{% block title %} Assign recipe to each date{% endblock %}	
+{% block title %} Assign recipe to date on calendar{% endblock %}	
 
 {% block content %}
-  <h2>Calendar</h2>
+<style> 
+	.w-15 .form-control{
+	opacity: 0;
+	}
+	.w-15:hover .form-control{
+	opacity: 1;
+	}
+	.w-15 .btn{
+	opacity: 0;
+	}
+	.w-15:hover .btn{
+	opacity: 1;
+	}
+	
+	</style>
+  <h2>Calendar {%  now  "M Y"%}</h2>
   <div class="table-responsive">
   <table class="table table-bordered">
   <thead>
@@ -33,14 +48,15 @@
 		<div class="form-group">
 		<input type="hidden" name="selected_date" value="{{ day }}">
 			{% for recipe in recipes %}
-					  {% if recipe.date_assigned|date:"Y-n-j" == year|stringformat:"s"|concat_str:'-'|concat_str:month|concat_str:'-'|concat_str:day  %}
+					   {% if recipe.date_assigned.day == day  %}
                         <div>{{ recipe.recipe_name }}</div>
                       {% endif %}
               {% endfor %} 
              <select name="selected_recipe" class="form-control">
                 <option value="">Select Recipe</option>
                         {% for recipe in recipes %}
-							{% if recipe.date_assigned|date:"Y-n-j" != year|stringformat:"s"|concat_str:'-'|concat_str:month|concat_str:'-'|concat_str:day  %}
+							{# {% if recipe.date_assigned|date:"Y-n-j" != year|stringformat:"s"|concat_str:'-'|concat_str:month|concat_str:'-'|concat_str:day  %} #}
+							{% if recipe.date_assigned.day != day  %}
 								<option value="{{ recipe.pk }}">{{  recipe.recipe_name }}</option>
 							 {% endif %}
                         {% endfor %}

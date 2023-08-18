@@ -93,11 +93,10 @@ def search_recipes(request):
 				#Set the recipe url(another api call)
 				recipe_url = f'https://api.spoonacular.com/recipes/{recipe_id}/information?includeNutrition=false&apiKey={api_key}'
 				print(recipe_url)
-				#Revert this
-				#recipe_info = requests.get(recipe_url).json()
+				recipe_info = requests.get(recipe_url).json()
 				#Add another field recipe_link to the recipe json
-				#recipe['recipe_link'] = recipe_info['sourceUrl']
-				recipe['recipe_link'] = 'https://www.indianhealthyrecipes.com/chilli-chicken-dry-recipe-indo-chinese-style/'
+				recipe['recipe_link'] = recipe_info['sourceUrl']
+				#recipe['recipe_link'] = 'https://www.indianhealthyrecipes.com/chilli-chicken-dry-recipe-indo-chinese-style/'
 			
 
 	else:
@@ -192,8 +191,6 @@ def display_calendar(request):
 	context = {
 		'month_calendar': cal_html.monthdays2calendar(year, month), #
 		'recipes' : recipes,
-		'year' : year,
-		'month' : month,
 		}
 	return render(request, 'pages/view_calendar.html', context)
 
