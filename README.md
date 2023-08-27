@@ -1,6 +1,7 @@
 ![Kickstart Coding Logo](./apps/core/static/images/kickstart_coding_logo.png)
 
-# Diet Planner Website
+# PlanMyMeal
+A website that lets users plan their meals as per their preferred diet.
 ## Interface Description
 1. User can login and enter their nutritional requirements on the homepage. Click on Search Recipes button.
 ![Kickstart Coding Logo](./apps/core/static/images/Homepage.png) <br />
